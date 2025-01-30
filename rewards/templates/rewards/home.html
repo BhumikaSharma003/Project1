@@ -1,0 +1,15 @@
+{% extends 'rewards/base.html' %}
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2 text-center">
+        <h1 class="mb-4">Welcome to App Rewards</h1>
+        <p class="lead">Earn points by completing tasks!</p>
+        <div class="mt-4">
+            <a href="{% url 'apps' %}" class="btn btn-primary btn-lg">View Available Apps</a>
+            {% if user.is_admin %}
+                <a href="{% url 'admin_dashboard' %}" class="btn btn-success btn-lg">Admin Dashboard</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

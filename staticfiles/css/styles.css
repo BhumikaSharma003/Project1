@@ -1,0 +1,18 @@
+.border-dashed {
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    transition: border-color 0.3s;
+}
+
+#drop-zone.dragover {
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+.app-card {
+    transition: transform 0.2s;
+}
+
+.app-card:hover {
+    transform: translateY(-5px);
+}

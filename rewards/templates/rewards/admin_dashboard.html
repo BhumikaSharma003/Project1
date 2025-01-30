@@ -1,0 +1,54 @@
+{% extends 'rewards/base.html' %}
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <h2 class="mb-4">Admin Dashboard</h2>
+        <div class="card">
+            <div class="card-header">
+                <h4>Add New App</h4>
+            </div>
+            <div class="card-body">
+                <form id="app-form">
+                    <div class="mb-3">
+                        <label class="form-label">App Name</label>
+                        <input type="text" class="form-control" id="app-name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Points</label>
+                        <input type="number" class="form-control" id="app-points" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add App</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('app-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const appData = {
+        name: document.getElementById('app-name').value,
+        points: document.getElementById('app-points').value
+    };
+
+    fetch('/api/apps/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(appData)
+    })
+    .then(response => {
+        if(response.ok) {
+            alert('App added successfully!');
+            location.reload();
+        } else {
+            alert('Failed to add app');
+        }
+    });
+});
+</script>
+{% endblock %}

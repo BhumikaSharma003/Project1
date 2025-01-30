@@ -1,0 +1,94 @@
+{% extends 'rewards/base.html' %}
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <h2 class="mb-4">Available Apps</h2>
+        <div id="apps-list" class="list-group">
+            <!-- Apps will be loaded via JavaScript -->
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Fetch apps with authentication
+    fetch('/api/apps/', {
+        headers: {
+            'Authorization': `Token ${localStorage.getItem('token')}`
+        }
+    })
+
+
+    // Load apps with upload buttons
+    fetch('/api/apps/')
+        .then(response => {
+        if(!response.ok) throw new Error('Failed to load apps');
+        return response.json();
+        .then(apps => {
+            const container = document.getElementById('apps-list');
+            apps.forEach(app => {
+                container.innerHTML += `
+                    <div class="list-group-item app-card mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5>${app.name}</h5>
+                                <p class="mb-0">Points: ${app.points}</p>
+                            </div>
+                            <button class="btn btn-success btn-sm" 
+                                    data-app-id="${app.id}"
+                                    onclick="selectApp(this)">
+                                Upload Proof
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        });
+
+    // File handling functions
+    window.selectApp = (button) => {
+        selectedAppId = button.getAttribute('data-app-id');
+        document.getElementById('file-input').click();
+    };
+
+    const handleFile = (file) => {
+        if (!selectedAppId) {
+            alert('Please select an app first');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('screenshot', file);
+        formData.append('app', selectedAppId);
+
+        fetch('/api/tasks/', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Token ${localStorage.getItem('token')}`
+            },
+            body: formData
+        })
+        .then(response => {
+            if(response.ok) {
+                alert('Proof submitted! Points awarded.');
+                location.reload();
+            } else {
+                alert('Submission failed. Please try again.');
+            }
+        });
+    };
+
+
+<!-- Drag & Drop Zone -->
+<div class="row mt-4">
+    <div class="col-md-8 offset-md-2">
+        <div id="drop-zone" class="border-dashed p-4 text-center">
+            <p>Drag and drop your screenshot here</p>
+            <input type="file" id="file-input" hidden accept="image/*">
+            <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">
+                Or click to select file
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
